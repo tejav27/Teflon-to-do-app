@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <p>{{notDone}} tasks remaining</p>
-    <TodoList v-bind:AllTodos="todos" :deletethat="deleteTask" />
+    <TodoList v-bind:todos="todos" :deletethat="deleteTask" />
     <input type="text" v-model="newItem" v-on:keydown.enter="addTodo" />
     <button @click="addTodo">Add</button>
     <p v-if="showError">Please enter Something to add</p>
@@ -21,13 +21,16 @@ export default {
     newItem:'',
     showError:false
   }},
-    updated(){
+    mounted(){
     if(!localStorage.getItem('todolist')){
       localStorage.setItem('todolist',JSON.stringify(this.todos))
     }
     else{
       this.todos=JSON.parse(localStorage.getItem('todolist'))
     }
+  },
+  updated(){
+    localStorage.setItem('todolist', JSON.stringify(this.todos))
   },
  components:{TodoList},
  methods:{
@@ -43,7 +46,8 @@ export default {
    },
    deleteTask(id){
      if(id){
-       this.todos.splice(id-1,1)
+       this.index= this.todos.filter(todo=>todo.id==id)
+       this.todos.splice(this.index,1)
      }
    }
  },
